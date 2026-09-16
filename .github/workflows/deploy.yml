@@ -1,0 +1,40 @@
+name: Deploy Quizzes to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject Tracker Script into all Quiz Files
+        run: |
+          mkdir -p public
+          cp -r quizzes/* public/ 2>/dev/null || true
+          for file in public/*.html; do
+            if [ -f "$file" ]; then
+              sed -i '/<\/body>/i <script>' "$file"
+              sed -i '/<\/body>/e cat tracker.js' "$file"
+              sed -i '/<\/body>/i </script>' "$file"
+            fi
+          done
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'public'
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
