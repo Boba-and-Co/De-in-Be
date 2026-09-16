@@ -20,7 +20,8 @@ The system uses [H5P](https://h5p.org/) via the free desktop editor [Lumi](https
 ```
 
 - **Authoring**: Quizzes are authored offline using Lumi and exported as standalone HTML bundles.
-- **Auto-Injection & Deployment**: When an HTML file is uploaded to `/quizzes`, a GitHub Action automatically injects `tracker.js` before the closing `</body>` tag and publishes the site to GitHub Pages.
+- **Auto-Injection & Deployment**: When an HTML file is uploaded to `/quizzes`, a GitHub Action automatically injects `tracker.js` before the closing `</body>` tag, runs `generate_index.py` to update the portal with all quizzes and 'Copy link' buttons, and publishes the site to GitHub Pages.
+- **Portal & Sharing**: The landing page at `https://<username>.github.io/<repo-name>/` provides a clean, searchable index of all quizzes with instant "Copy link" buttons for sharing.
 - **Automated Error Logging**: Upon quiz submission, the injected script captures the student's name, activity name, score, and the exact sentences containing mistakes.
 - **Google Sheets Log**: Incorrect student responses are appended to a Google Sheet with mistaken words highlighted in red text.
 
@@ -29,10 +30,12 @@ The system uses [H5P](https://h5p.org/) via the free desktop editor [Lumi](https
 ```
 ├── quizzes/              # Drop raw exported Lumi HTML files here
 │   └── example-quiz.html
+├── generate_index.py     # Automatically scans quizzes and generates the portal
+├── index.html            # Minimal and clean quiz portal (root preview)
 ├── tracker.js            # Standalone listener that intercepts H5P xAPI events
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml    # Injects tracker.js and deploys to GitHub Pages
+│       └── deploy.yml    # Injects tracker.js, builds portal, and deploys to Pages
 └── README.md
 ```
 
@@ -49,10 +52,16 @@ The system uses [H5P](https://h5p.org/) via the free desktop editor [Lumi](https
 - Click **Add file > Upload files**, drag your HTML file in, and click **Commit changes**.
 
 ### 3. Share with Students
-Within ~60 seconds, the exercise goes live at:
-```
-https://<username>.github.io/<repo-name>/<file-name>.html
-```
+Within ~60 seconds, the new exercise is automatically indexed:
+- **Quiz Portal**:
+  ```
+  https://<username>.github.io/<repo-name>/
+  ```
+  Visit the portal to browse exercises, filter by title, and click **Copy link** to easily get shareable links for students.
+- **Direct Exercise Link**:
+  ```
+  https://<username>.github.io/<repo-name>/<file-name>.html
+  ```
 Students enter their name when prompted and complete the task.
 
 ### 4. Review Results

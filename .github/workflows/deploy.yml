@@ -28,6 +28,10 @@ jobs:
             fi
           done
 
+      - name: Generate Quiz Index Page
+        run: |
+          python3 generate_index.py --public-dir public
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
